@@ -1,5 +1,6 @@
 {
-  "name": "Healthcare IT Knowledge Navigator",
+  "name": "Healthcare IT Knowledge Navigator -v1",
   "description": "An interactive knowledge base for a healthcare imaging integration platform, designed to assist support engineers, system architects, and clinical staff by transforming complex documentation into an intuitive, searchable, and educational tool.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "prompt": ""
 }

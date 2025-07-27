@@ -1,29 +1,21 @@
-
 import React, { useState, useMemo } from 'react';
 import { SYSTEM_COMPONENTS, CONNECTIONS, ICONS } from '../constants';
 import type { SystemComponent } from '../types';
 import Card from './common/Card';
 import Modal from './common/Modal';
 
-const connectionColorMapping: Record<string, string> = {
-    'DICOM': 'text-info', // blue
-    'HL7': 'text-warning', // amber
-    'API': 'text-normal', // green
-    'HTTPS': 'text-normal', // green
-};
-
 const strokeColorMapping: Record<string, string> = {
-    'DICOM': 'stroke-info',
-    'HL7': 'stroke-warning',
-    'API': 'stroke-normal',
-    'HTTPS': 'stroke-normal',
+    'DICOM': 'stroke-brand-subtle',
+    'HL7': 'stroke-brand-subtle',
+    'API': 'stroke-brand-subtle',
+    'HTTPS': 'stroke-brand-subtle',
 };
 
 const fillColorMapping: Record<string, string> = {
-    'DICOM': 'fill-info',
-    'HL7': 'fill-warning',
-    'API': 'fill-normal',
-    'HTTPS': 'fill-normal',
+    'DICOM': 'fill-brand-subtle',
+    'HL7': 'fill-brand-subtle',
+    'API': 'fill-brand-subtle',
+    'HTTPS': 'fill-brand-subtle',
 };
 
 
@@ -33,14 +25,14 @@ const SystemArchitecture = () => {
     const getComponentById = (id: string) => SYSTEM_COMPONENTS.find(c => c.id === id);
 
     const legendItems = useMemo(() => [
-        { label: 'DICOM', color: 'text-info', icon: ICONS['DICOM'] },
-        { label: 'HL7', color: 'text-warning', icon: ICONS['HL7'] },
-        { label: 'API/HTTPS', color: 'text-normal', icon: ICONS['API'] },
+        { label: 'DICOM', icon: ICONS['DICOM'] },
+        { label: 'HL7', icon: ICONS['HL7'] },
+        { label: 'API/HTTPS', icon: ICONS['API'] },
     ], []);
 
     return (
         <div>
-            <div className="relative w-full h-[600px] bg-gray-50 rounded-lg border border-gray-200 p-4 overflow-hidden">
+            <div className="relative w-full h-[600px] bg-brand-bg rounded-lg border border-brand-surface p-4 overflow-hidden">
                 <svg width="100%" height="100%" className="absolute top-0 left-0 pointer-events-none">
                     <defs>
                         {CONNECTIONS.map((conn, index) => {
@@ -56,7 +48,7 @@ const SystemArchitecture = () => {
                                     markerHeight="6" 
                                     orient="auto-start-reverse"
                                 >
-                                    <path d="M 0 0 L 10 5 L 0 10 z" className={colorClass} />
+                                    <path d="M 0 0 L 10 5 L 0 10 z" className={`${colorClass} opacity-50`} />
                                 </marker>
                             );
                         })}
@@ -90,8 +82,8 @@ const SystemArchitecture = () => {
                                 key={index}
                                 x1={`${fromPos.x}%`} y1={`${fromPos.y}%`}
                                 x2={`${adjustedToX}%`} y2={`${adjustedToY}%`}
-                                className={strokeClass}
-                                strokeWidth="2.5"
+                                className={`${strokeClass} opacity-40`}
+                                strokeWidth="2"
                                 markerEnd={`url(#arrow-${conn.from}-${conn.to})`}
                             />
                         )
@@ -110,8 +102,8 @@ const SystemArchitecture = () => {
                     const midY = fromPos.y + (toPos.y - fromPos.y) / 2;
                     
                     return (
-                        <div key={`label-${index}`} className="absolute p-1 bg-gray-50 rounded-md flex items-center space-x-1" style={{ top: `${midY}%`, left: `${midX}%`, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
-                           {ICONS[conn.label]}
+                        <div key={`label-${index}`} className="absolute p-1 bg-brand-bg rounded-md flex items-center space-x-1" style={{ top: `${midY}%`, left: `${midX}%`, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
+                           {React.cloneElement(ICONS[conn.label], { className: 'w-4 h-4 text-brand-subtle' })}
                            <span className="text-xs font-semibold text-brand-subtle">{conn.label}</span>
                         </div>
                     )
@@ -121,29 +113,29 @@ const SystemArchitecture = () => {
                 {SYSTEM_COMPONENTS.map(comp => (
                     <div
                         key={comp.id}
-                        className="absolute w-40 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                        className="absolute w-40 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
                         style={{ top: comp.position.top, left: comp.position.left }}
                         onClick={() => setSelectedComponent(comp)}
                     >
-                        <Card className="hover:border-info hover:shadow-lg transition-all">
-                            <div className="flex flex-col items-center text-center">
-                                <div className="p-2 bg-blue-100 rounded-full mb-2">
-                                    {ICONS.SYSTEM}
+                        <Card className="group-hover:border-brand-accent group-hover:shadow-lg transition-all text-center">
+                            <div className="flex flex-col items-center">
+                                <div className="p-2 mb-2">
+                                    {React.cloneElement(ICONS.SYSTEM, { className: `w-8 h-8 ${comp.colorClass}` })}
                                 </div>
-                                <h3 className="font-bold text-sm text-brand-text">{comp.name}</h3>
-                                <p className="text-xs text-brand-subtle">{comp.description}</p>
+                                <h3 className="font-bold text-sm text-brand-accent">{comp.name}</h3>
+                                <p className="text-xs text-brand-subtle mt-1">{comp.description}</p>
                             </div>
                         </Card>
                     </div>
                 ))}
                 
-                <div className="absolute bottom-4 right-4 bg-brand-surface/80 backdrop-blur-sm rounded-lg p-3 border border-gray-200 shadow-sm">
+                <div className="absolute bottom-4 right-4 bg-brand-surface rounded-lg p-3 border border-brand-subtle/10 shadow-sm">
                     <h4 className="font-bold text-sm mb-2 text-brand-text">Legend</h4>
                     <div className="space-y-2">
                         {legendItems.map(item => (
                             <div key={item.label} className="flex items-center space-x-2">
-                                <div className="w-5 h-5">{item.icon}</div>
-                                <span className={`text-xs font-medium ${item.color}`}>{item.label}</span>
+                                {React.cloneElement(item.icon, { className: 'w-5 h-5' })}
+                                <span className={`text-xs font-medium text-brand-subtle`}>{item.label}</span>
                             </div>
                         ))}
                     </div>

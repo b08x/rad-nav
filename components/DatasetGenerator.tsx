@@ -68,9 +68,9 @@ const DatasetGenerator = () => {
                 id={label}
                 value={value}
                 onChange={onChange}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-info focus:border-info sm:text-sm rounded-md"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-brand-bg text-brand-text border border-white/20 focus:outline-none focus:ring-info focus:border-info sm:text-sm rounded-md"
             >
-                {options.map(opt => <option key={opt}>{opt}</option>)}
+                {options.map(opt => <option key={opt} className="bg-brand-surface">{opt}</option>)}
             </select>
         </div>
     );
@@ -91,14 +91,14 @@ const DatasetGenerator = () => {
                             onChange={e => setCount(Math.max(1, parseInt(e.target.value, 10)))}
                             min="1"
                             max="20"
-                            className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-gray-300 focus:outline-none focus:ring-info focus:border-info sm:text-sm rounded-md"
+                            className="mt-1 block w-full pl-3 pr-2 py-2 text-base bg-brand-bg text-brand-text border border-white/20 focus:outline-none focus:ring-info focus:border-info sm:text-sm rounded-md"
                         />
                     </div>
                     
                     <button
                         onClick={handleGenerate}
                         disabled={isLoading}
-                        className="w-full bg-info text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-brand-accent text-brand-bg font-bold py-2 px-4 rounded-lg hover:brightness-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? 'Generating...' : 'Generate Dataset'}
                     </button>
@@ -111,7 +111,7 @@ const DatasetGenerator = () => {
                     {results.length > 0 && (
                         <button 
                             onClick={handleExport}
-                            className="flex items-center px-4 py-2 bg-normal text-white rounded-lg hover:bg-green-600 transition-colors"
+                            className="flex items-center px-4 py-2 bg-normal text-white rounded-lg hover:brightness-90 transition-colors"
                         >
                             <DownloadIcon className="w-5 h-5 mr-2" />
                             Export JSON
@@ -122,7 +122,7 @@ const DatasetGenerator = () => {
                 {isLoading && (
                     <div className="flex justify-center items-center p-10">
                          <div className="flex items-center space-x-2 text-brand-subtle">
-                            <svg className="animate-spin h-5 w-5 text-info" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-5 w-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -131,7 +131,7 @@ const DatasetGenerator = () => {
                     </div>
                 )}
                 
-                {error && <Card className="border-critical/50 bg-red-50"><p className="text-critical font-medium">{error}</p></Card>}
+                {error && <Card className="border-critical/50 bg-critical/10"><p className="text-critical font-medium">{error}</p></Card>}
 
                 {!isLoading && !error && results.length === 0 && (
                     <Card><p className="text-center text-brand-subtle">No data generated yet. Configure the options above and click "Generate Dataset".</p></Card>
@@ -141,9 +141,9 @@ const DatasetGenerator = () => {
                     {results.map((pair, index) => (
                         <Card key={index} className="transition hover:shadow-md">
                             <p className="font-semibold text-brand-text mb-2">
-                                <span className="text-info font-bold">Q:</span> {pair.question}
+                                <span className="text-brand-accent font-bold">Q:</span> {pair.question}
                             </p>
-                            <div className="pl-4 border-l-4 border-gray-200">
+                            <div className="pl-4 border-l-4 border-white/10">
                                 <p className="text-brand-subtle">
                                     <span className="text-normal font-bold">A:</span> {pair.answer}
                                 </p>

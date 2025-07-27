@@ -64,20 +64,20 @@ const Dashboard = ({ role, onBack }: DashboardProps) => {
 
   return (
     <div className="flex flex-col h-screen bg-brand-bg">
-      <header className="flex items-center justify-between p-4 bg-brand-surface shadow-sm border-b border-gray-200">
+      <header className="flex items-center justify-between p-4 bg-brand-surface shadow-md border-b border-brand-bg">
         <div className="flex items-center">
-          <button onClick={onBack} className="p-2 rounded-full hover:bg-gray-200 transition-colors mr-4">
+          <button onClick={onBack} className="p-2 rounded-full hover:bg-white/10 transition-colors mr-4">
             <ArrowLeftIcon className="w-5 h-5 text-brand-subtle" />
           </button>
           <h1 className="text-xl font-bold text-brand-text">Knowledge Navigator</h1>
         </div>
         <div className="text-sm text-brand-subtle">
-          Role: <span className="font-semibold text-info">{role}</span>
+          Role: <span className="font-semibold text-brand-accent">{role}</span>
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <nav className="w-64 bg-brand-surface p-4 border-r border-gray-200">
+        <nav className="w-64 bg-brand-surface p-4 border-r border-brand-bg">
           <ul className="space-y-2">
             {visibleTabs.map(({ id, icon }) => (
               <li key={id}>
@@ -85,8 +85,8 @@ const Dashboard = ({ role, onBack }: DashboardProps) => {
                   onClick={() => setActiveTab(id)}
                   className={`w-full flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                     activeTab === id
-                      ? 'bg-blue-100 text-info'
-                      : 'text-brand-subtle hover:bg-gray-100 hover:text-brand-text'
+                      ? 'bg-brand-accent/10 text-brand-accent'
+                      : 'text-brand-subtle hover:bg-white/5 hover:text-brand-text'
                   }`}
                 >
                   {icon}

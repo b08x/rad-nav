@@ -54,31 +54,31 @@ const KnowledgeEngine = ({ role }: KnowledgeEngineProps) => {
 
   return (
     <div className="flex flex-col h-full max-w-4xl mx-auto">
-      <div className="flex-1 overflow-y-auto p-4 bg-white border border-gray-200 rounded-lg shadow-inner mb-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-brand-surface border border-white/10 rounded-lg shadow-inner mb-4">
         <div className="space-y-6">
           {messages.map((msg, index) => (
             <div key={index} className={`flex items-start gap-3 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
-              {msg.sender === 'bot' && <BotIcon className="w-8 h-8 flex-shrink-0 text-info" />}
+              {msg.sender === 'bot' && <BotIcon className="w-8 h-8 flex-shrink-0 text-brand-accent" />}
               <div
                 className={`max-w-xl px-4 py-3 rounded-2xl ${
                   msg.sender === 'user'
-                    ? 'bg-blue-500 text-white rounded-br-lg'
-                    : 'bg-gray-100 text-brand-text rounded-bl-lg'
+                    ? 'bg-brand-accent text-brand-bg font-medium'
+                    : 'bg-brand-bg text-brand-text'
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
               </div>
-               {msg.sender === 'user' && <UserIcon className="w-8 h-8 flex-shrink-0 text-gray-400" />}
+               {msg.sender === 'user' && <UserIcon className="w-8 h-8 flex-shrink-0 text-brand-subtle" />}
             </div>
           ))}
           {isLoading && (
              <div className="flex items-start gap-3">
-                 <BotIcon className="w-8 h-8 flex-shrink-0 text-info" />
-                 <div className="max-w-xl px-4 py-3 rounded-2xl bg-gray-100 text-brand-text rounded-bl-lg">
+                 <BotIcon className="w-8 h-8 flex-shrink-0 text-brand-accent" />
+                 <div className="max-w-xl px-4 py-3 rounded-2xl bg-brand-bg text-brand-text">
                     <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse"></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse [animation-delay:0.2s]"></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+                        <div className="w-2 h-2 bg-brand-subtle rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-brand-subtle rounded-full animate-pulse [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 bg-brand-subtle rounded-full animate-pulse [animation-delay:0.4s]"></div>
                     </div>
                  </div>
              </div>
@@ -87,7 +87,7 @@ const KnowledgeEngine = ({ role }: KnowledgeEngineProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 p-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+      <div className="flex items-center gap-2 p-2 bg-brand-surface border border-white/10 rounded-lg shadow-sm">
         <input
           type="text"
           value={input}
@@ -100,7 +100,7 @@ const KnowledgeEngine = ({ role }: KnowledgeEngineProps) => {
         <button
           onClick={handleSend}
           disabled={isLoading || input.trim() === ''}
-          className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 rounded-full bg-brand-accent text-brand-bg hover:brightness-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <SendIcon className="w-5 h-5" />
         </button>

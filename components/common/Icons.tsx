@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-type IconProps = {
+export type IconProps = {
   className?: string;
 };
 

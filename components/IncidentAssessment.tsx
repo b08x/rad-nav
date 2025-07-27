@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Card from './common/Card';
 import { INCIDENT_ASSESSMENTS } from '../constants';
@@ -10,7 +9,7 @@ const parseWithCitations = (text: string): React.ReactNode[] => {
         const match = part.match(/\[cite_start\](.*?)\[cite: (.*?)\]/);
         if (match) {
             return (
-                <span key={index} className="bg-blue-50 border-l-4 border-blue-200 pl-2 pr-1 py-0.5 rounded-r-md">
+                <span key={index} className="bg-info/10 border-l-4 border-info/50 pl-2 pr-1 py-0.5 rounded-r-md">
                     {match[1]}
                     <sup className="ml-1 text-info font-semibold cursor-help" title={`Source IDs: ${match[2]}`}>
                         [{match[2]}]
@@ -89,15 +88,15 @@ const IncidentAssessment = () => {
     return (
         <Card>
             <h2 className="text-2xl font-bold text-brand-text mb-4">Incident Assessment Library</h2>
-            <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4 mb-4">
+            <div className="flex flex-wrap gap-2 border-b border-brand-surface pb-4 mb-4">
                 {INCIDENT_ASSESSMENTS.map(incident => (
                     <button
                         key={incident.id}
                         onClick={() => setSelectedIncident(incident)}
                         className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${
                             selectedIncident?.id === incident.id
-                                ? 'bg-info text-white shadow'
-                                : 'bg-gray-100 text-brand-subtle hover:bg-gray-200'
+                                ? 'bg-brand-accent text-brand-bg shadow'
+                                : 'bg-brand-surface text-brand-subtle hover:bg-brand-subtle/10'
                         }`}
                     >
                         {incident.title}

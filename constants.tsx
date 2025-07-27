@@ -1,7 +1,7 @@
-
 import React from 'react';
 import type { SystemComponent, Connection, DecisionTree, IncidentAssessmentDoc } from './types';
 import { SystemIcon, HL7Icon, DicomIcon, ApiIcon } from './components/common/Icons';
+import type { IconProps } from './components/common/Icons';
 
 export const KNOWLEDGE_BASE_DOCUMENT = `
 ---
@@ -192,12 +192,12 @@ This support framework ensures rapid problem identification, a path to efficient
 `;
 
 export const SYSTEM_COMPONENTS: SystemComponent[] = [
-    { id: 'pacs', name: 'PACS Systems', description: 'Picture Archiving and Communication System.', details: ["Vendor-specific per site.", "Source of DICOM images."], position: { top: '50%', left: '5%' } },
-    { id: 'unifier', name: 'Unifier Appliances', description: 'On-premise caching and connectivity appliances.', details: ["Located in 5 regions.", "Monitor storage (3TB), cache, and volume."], position: { top: '50%', left: '25%' } },
-    { id: 'iris', name: 'IRIS Engine', description: 'Core HL7 & API integration engine.', details: ["Runs on Azure VMs.", "Handles message transformation and routing."], position: { top: '50%', left: '50%' } },
-    { id: 'powerscribe', name: 'PowerScribe 360', description: 'Dictation and reporting system by Nuance.', details: ["Integrates via HTTPS API.", "Failures can halt report workflows."], position: { top: '25%', left: '75%' } },
-    { id: 'risemr', name: 'RIS/EMR', description: 'Radiology Information System / Electronic Medical Record.', details: ["Receives final reports via HL7.", "Critical for patient record integrity."], position: { top: '50%', left: '75%' } },
-    { id: 'radassist', name: 'RadAssist', description: 'Primary diagnostic workstation for radiologists.', details: ["Pulls images via Unifier.", "Performance is a key KPI."], position: { top: '75%', left: '25%' } },
+    { id: 'pacs', name: 'PACS Systems', description: 'Picture Archiving and Communication System.', details: ["Vendor-specific per site.", "Source of DICOM images."], position: { top: '50%', left: '5%' }, colorClass: 'text-layer-data' },
+    { id: 'unifier', name: 'Unifier Appliances', description: 'On-premise caching and connectivity appliances.', details: ["Located in 5 regions.", "Monitor storage (3TB), cache, and volume."], position: { top: '50%', left: '25%' }, colorClass: 'text-layer-data' },
+    { id: 'iris', name: 'IRIS Engine', description: 'Core HL7 & API integration engine.', details: ["Runs on Azure VMs.", "Handles message transformation and routing."], position: { top: '50%', left: '50%' }, colorClass: 'text-layer-logic' },
+    { id: 'powerscribe', name: 'PowerScribe 360', description: 'Dictation and reporting system by Nuance.', details: ["Integrates via HTTPS API.", "Failures can halt report workflows."], position: { top: '25%', left: '75%' }, colorClass: 'text-layer-api' },
+    { id: 'risemr', name: 'RIS/EMR', description: 'Radiology Information System / Electronic Medical Record.', details: ["Receives final reports via HL7.", "Critical for patient record integrity."], position: { top: '50%', left: '75%' }, colorClass: 'text-layer-api' },
+    { id: 'radassist', name: 'RadAssist', description: 'Primary diagnostic workstation for radiologists.', details: ["Pulls images via Unifier.", "Performance is a key KPI."], position: { top: '75%', left: '25%' }, colorClass: 'text-layer-presentation' },
 ];
 
 export const CONNECTIONS: Connection[] = [
@@ -208,7 +208,7 @@ export const CONNECTIONS: Connection[] = [
     { from: 'iris', to: 'risemr', label: 'HL7' },
 ];
 
-export const ICONS: Record<string, React.ReactNode> = {
+export const ICONS: Record<string, React.ReactElement<IconProps>> = {
     DICOM: <DicomIcon className="w-5 h-5 text-info" />,
     HL7: <HL7Icon className="w-5 h-5 text-warning" />,
     API: <ApiIcon className="w-5 h-5 text-normal" />,
@@ -217,30 +217,30 @@ export const ICONS: Record<string, React.ReactNode> = {
 };
 
 export const DICOM_WIZARD_TREE: DecisionTree = {
-  start: { text: "What is the primary symptom?", options: [{ text: "Images not loading / slow", next: 'local' }, { text: "Connectivity issues", next: 'network' }, { text: "Platform-wide outage", next: 'cloud' }], colorClass: 'bg-blue-100 border-info'},
-  local: { text: "Is the issue localized to one Unifier?", options: [{ text: "Yes, seems local", next: 'cache' }, { text: "No, multiple regions affected", next: 'network' }], colorClass: 'bg-blue-100 border-info'},
-  network: { text: "Check network connectivity to Azure.", options: [{ text: "HTTPS to App Services OK", next: 'dns' }, { text: "HTTPS failing", next: 'https' }], colorClass: 'bg-blue-100 border-info'},
-  cloud: { text: "Is Azure reporting service health issues?", options: [{ text: "Yes, degradation reported", next: 'azureHealth' }, { text: "No, all services green", next: 'redis' }], colorClass: 'bg-blue-100 border-info'},
-  cache: { text: "Check local Unifier cache utilization.", resolution: "If >90%, purge old studies. Check DICOM C-STORE operations from PACS. As a last resort, restart Unifier services.", colorClass: 'bg-green-100 border-normal'},
-  cstore: { text: "Verify DICOM C-STORE from PACS.", resolution: "Ensure PACS is sending studies correctly to the Unifier appliance. Check logs on both systems.", colorClass: 'bg-green-100 border-normal'},
-  restart: { text: "Restart Unifier services.", resolution: "If other steps fail, perform a controlled restart of the Unifier services. Monitor system upon restart.", colorClass: 'bg-amber-100 border-warning'},
-  https: { text: "Check firewall logs.", resolution: "Review firewall logs for blocked connections to Azure App Services. Ensure rules are correct.", colorClass: 'bg-green-100 border-normal'},
-  firewall: { text: "Check firewall logs.", resolution: "Review logs for blocked connections to cloud endpoints.", colorClass: 'bg-green-100 border-normal'},
-  dns: { text: "Verify DNS resolution.", resolution: "Ensure DNS correctly resolves all cloud endpoints. Use nslookup or dig for diagnostics.", colorClass: 'bg-green-100 border-normal'},
-  azureHealth: { text: "Monitor Azure Service Health Dashboard.", resolution: "Communicate status to users based on Azure updates. Escalate to cloud operations team for internal impact assessment.", colorClass: 'bg-amber-100 border-warning'},
-  redis: { text: "Check Redis Cache performance metrics.", resolution: "High latency or errors in Redis could be the bottleneck. Analyze metrics in Azure Portal.", colorClass: 'bg-green-100 border-normal'},
-  escalateCloud: { text: "Escalate to Cloud Operations.", resolution: "If all else fails, escalate to the Cloud Operations team with all collected diagnostic data.", colorClass: 'bg-red-100 border-critical'},
+  start: { text: "What is the primary symptom?", options: [{ text: "Images not loading / slow", next: 'local' }, { text: "Connectivity issues", next: 'network' }, { text: "Platform-wide outage", next: 'cloud' }], colorClass: 'bg-info/10 border-info'},
+  local: { text: "Is the issue localized to one Unifier?", options: [{ text: "Yes, seems local", next: 'cache' }, { text: "No, multiple regions affected", next: 'network' }], colorClass: 'bg-info/10 border-info'},
+  network: { text: "Check network connectivity to Azure.", options: [{ text: "HTTPS to App Services OK", next: 'dns' }, { text: "HTTPS failing", next: 'https' }], colorClass: 'bg-info/10 border-info'},
+  cloud: { text: "Is Azure reporting service health issues?", options: [{ text: "Yes, degradation reported", next: 'azureHealth' }, { text: "No, all services green", next: 'redis' }], colorClass: 'bg-info/10 border-info'},
+  cache: { text: "Check local Unifier cache utilization.", resolution: "If >90%, purge old studies. Check DICOM C-STORE operations from PACS. As a last resort, restart Unifier services.", colorClass: 'bg-normal/10 border-normal'},
+  cstore: { text: "Verify DICOM C-STORE from PACS.", resolution: "Ensure PACS is sending studies correctly to the Unifier appliance. Check logs on both systems.", colorClass: 'bg-normal/10 border-normal'},
+  restart: { text: "Restart Unifier services.", resolution: "If other steps fail, perform a controlled restart of the Unifier services. Monitor system upon restart.", colorClass: 'bg-warning/10 border-warning'},
+  https: { text: "Check firewall logs.", resolution: "Review firewall logs for blocked connections to Azure App Services. Ensure rules are correct.", colorClass: 'bg-normal/10 border-normal'},
+  firewall: { text: "Check firewall logs.", resolution: "Review logs for blocked connections to cloud endpoints.", colorClass: 'bg-normal/10 border-normal'},
+  dns: { text: "Verify DNS resolution.", resolution: "Ensure DNS correctly resolves all cloud endpoints. Use nslookup or dig for diagnostics.", colorClass: 'bg-normal/10 border-normal'},
+  azureHealth: { text: "Monitor Azure Service Health Dashboard.", resolution: "Communicate status to users based on Azure updates. Escalate to cloud operations team for internal impact assessment.", colorClass: 'bg-warning/10 border-warning'},
+  redis: { text: "Check Redis Cache performance metrics.", resolution: "High latency or errors in Redis could be the bottleneck. Analyze metrics in Azure Portal.", colorClass: 'bg-normal/10 border-normal'},
+  escalateCloud: { text: "Escalate to Cloud Operations.", resolution: "If all else fails, escalate to the Cloud Operations team with all collected diagnostic data.", colorClass: 'bg-critical/10 border-critical'},
 };
 
 export const HL7_WIZARD_TREE: DecisionTree = {
-  start: { text: "What is the primary symptom of the HL7 failure?", options: [{ text: "Reports missing from EMR", next: 'check_ps' }, { text: "Billing data is incorrect", next: 'check_ps' }], colorClass: 'bg-blue-100 border-info'},
-  check_ps: { text: "Is the report finalized in PowerScribe?", options: [{ text: "Yes, it is finalized", next: 'check_iris' }, { text: "No, it's in draft/pending", next: 'resolve_ps' }], colorClass: 'bg-blue-100 border-info'},
-  resolve_ps: { text: "Finalize the report in PowerScribe.", resolution: "The radiologist needs to finalize the report. Once finalized, the ORU message will be generated and sent.", colorClass: 'bg-green-100 border-normal' },
-  check_iris: { text: "Check the IRIS Engine message queue.", options: [{ text: "Queue is backlogged or shows errors", next: 'resolve_iris_queue' }, { text: "Queue is clear, message sent", next: 'check_emr' }], colorClass: 'bg-blue-100 border-info'},
-  resolve_iris_queue: { text: "Reprocess failed messages from the IRIS dead letter queue.", resolution: "Investigate the cause of the backlog. It could be malformed data or endpoint connectivity. Reprocess messages once the root cause is fixed.", colorClass: 'bg-amber-100 border-warning'},
-  check_emr: { text: "Verify the EMR/RIS HL7 listener status.", options: [{ text: "Listener is down or unresponsive", next: 'resolve_emr_listener' }, { text: "Listener is up and running", next: 'check_network' }], colorClass: 'bg-blue-100 border-info'},
-  resolve_emr_listener: { text: "Restart the HL7 listener on the EMR/RIS.", resolution: "Contact the EMR/RIS vendor or local IT to restart the interface listener. Verify connectivity from the IRIS engine.", colorClass: 'bg-green-100 border-normal'},
-  check_network: { text: "Is there a network path issue?", resolution: "Verify firewall rules, VPN tunnels, and port accessibility between IRIS and the destination system. A network issue could be dropping the messages.", colorClass: 'bg-amber-100 border-warning'},
+  start: { text: "What is the primary symptom of the HL7 failure?", options: [{ text: "Reports missing from EMR", next: 'check_ps' }, { text: "Billing data is incorrect", next: 'check_ps' }], colorClass: 'bg-info/10 border-info'},
+  check_ps: { text: "Is the report finalized in PowerScribe?", options: [{ text: "Yes, it is finalized", next: 'check_iris' }, { text: "No, it's in draft/pending", next: 'resolve_ps' }], colorClass: 'bg-info/10 border-info'},
+  resolve_ps: { text: "Finalize the report in PowerScribe.", resolution: "The radiologist needs to finalize the report. Once finalized, the ORU message will be generated and sent.", colorClass: 'bg-normal/10 border-normal' },
+  check_iris: { text: "Check the IRIS Engine message queue.", options: [{ text: "Queue is backlogged or shows errors", next: 'resolve_iris_queue' }, { text: "Queue is clear, message sent", next: 'check_emr' }], colorClass: 'bg-info/10 border-info'},
+  resolve_iris_queue: { text: "Reprocess failed messages from the IRIS dead letter queue.", resolution: "Investigate the cause of the backlog. It could be malformed data or endpoint connectivity. Reprocess messages once the root cause is fixed.", colorClass: 'bg-warning/10 border-warning'},
+  check_emr: { text: "Verify the EMR/RIS HL7 listener status.", options: [{ text: "Listener is down or unresponsive", next: 'resolve_emr_listener' }, { text: "Listener is up and running", next: 'check_network' }], colorClass: 'bg-info/10 border-info'},
+  resolve_emr_listener: { text: "Restart the HL7 listener on the EMR/RIS.", resolution: "Contact the EMR/RIS vendor or local IT to restart the interface listener. Verify connectivity from the IRIS engine.", colorClass: 'bg-normal/10 border-normal'},
+  check_network: { text: "Is there a network path issue?", resolution: "Verify firewall rules, VPN tunnels, and port accessibility between IRIS and the destination system. A network issue could be dropping the messages.", colorClass: 'bg-warning/10 border-warning'},
 };
 
 export const INCIDENT_ASSESSMENTS: IncidentAssessmentDoc[] = [

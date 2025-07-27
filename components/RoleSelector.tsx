@@ -9,14 +9,14 @@ interface RoleSelectorProps {
 
 const roles = [
   { role: Role.SupportEngineer, icon: <UserCogIcon className="w-12 h-12 mb-4 text-info" />, description: "Access troubleshooting guides, escalation matrix, and performance dashboards." },
-  { role: Role.SystemArchitect, icon: <BrainCircuitIcon className="w-12 h-12 mb-4 text-purple-500" />, description: "Explore system diagrams, data flows, and integration point details." },
+  { role: Role.SystemArchitect, icon: <BrainCircuitIcon className="w-12 h-12 mb-4 text-layer-presentation" />, description: "Explore system diagrams, data flows, and integration point details." },
   { role: Role.ClinicalStaff, icon: <StethoscopeIcon className="w-12 h-12 mb-4 text-critical" />, description: "View system status, communication templates, and common issue workarounds." },
   { role: Role.LMTrainer, icon: <UsersIcon className="w-12 h-12 mb-4 text-normal" />, description: "Use the knowledge engine and generate structured datasets for model training." },
 ];
 
 const RoleSelector = ({ onSelectRole }: RoleSelectorProps) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-brand-text">Healthcare IT Knowledge Navigator</h1>
         <p className="mt-2 text-lg text-brand-subtle">Select your role to begin</p>
@@ -26,7 +26,7 @@ const RoleSelector = ({ onSelectRole }: RoleSelectorProps) => {
           <button
             key={role}
             onClick={() => onSelectRole(role)}
-            className="flex flex-col items-center p-8 text-center bg-brand-surface rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out border border-gray-200 group"
+            className="flex flex-col items-center p-8 text-center bg-brand-surface rounded-xl shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-1 transition-all duration-300 ease-in-out border border-white/10 hover:border-brand-accent group"
           >
             {icon}
             <h2 className="text-xl font-semibold text-brand-text mb-2">{role}</h2>

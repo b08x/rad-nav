@@ -1,4 +1,3 @@
-
 export enum Role {
   SupportEngineer = 'Support Engineer',
   SystemArchitect = 'System Architect',
@@ -19,6 +18,7 @@ export interface SystemComponent {
   description: string;
   details: string[];
   position: { top: string; left: string; };
+  colorClass: string;
 }
 
 export interface Connection {
