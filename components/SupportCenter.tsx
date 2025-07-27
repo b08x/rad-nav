@@ -1,0 +1,178 @@
+
+import React, { useState } from 'react';
+import type { Role, DecisionTree } from '../types';
+import Card from './common/Card';
+import IncidentAssessment from './IncidentAssessment';
+import { DICOM_WIZARD_TREE, HL7_WIZARD_TREE } from '../constants';
+import { FileWarningIcon, ShieldAlertIcon, ChevronRightIcon, RefreshCwIcon } from './common/Icons';
+
+interface WizardInfo {
+    key: 'DICOM' | 'HL7';
+    title: string;
+    description: string;
+    tree: DecisionTree;
+    icon: React.ReactElement;
+}
+
+const WIZARDS: WizardInfo[] = [
+    {
+        key: 'DICOM',
+        title: 'DICOM Issues Wizard',
+        description: 'Troubleshoot "Images Not Loading" and other DICOM-related problems.',
+        tree: DICOM_WIZARD_TREE,
+        icon: <FileWarningIcon className="w-8 h-8 text-info" />
+    },
+    {
+        key: 'HL7',
+        title: 'HL7 Report Failure Wizard',
+        description: 'Diagnose issues with missing reports in EMR/RIS and billing discrepancies.',
+        tree: HL7_WIZARD_TREE,
+        icon: <ShieldAlertIcon className="w-8 h-8 text-warning" />
+    }
+];
+
+const DiagnosticWizard = ({ wizard, onClose }: { wizard: WizardInfo; onClose: () => void; }) => {
+    const [currentNodeKey, setCurrentNodeKey] = useState<string>('start');
+    
+    const handleReset = () => {
+        setCurrentNodeKey('start');
+    };
+
+    const handleOptionClick = (nextNodeKey: string) => {
+        setCurrentNodeKey(nextNodeKey);
+    };
+    
+    const node = wizard.tree[currentNodeKey];
+
+    return (
+        <div className="animate-fade-in">
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="bg-blue-100 p-2 rounded-full text-info">
+                        {wizard.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold text-brand-text">{wizard.title}</h3>
+                </div>
+                <button onClick={onClose} className="text-sm font-semibold text-info hover:underline">
+                    &larr; Back to Wizard Selection
+                </button>
+            </div>
+
+            <div className="flex justify-end mb-4">
+                <button onClick={handleReset} className="text-xs font-semibold text-info hover:underline flex items-center gap-1">
+                    <RefreshCwIcon className="w-3 h-3"/>
+                    Restart Wizard
+                </button>
+            </div>
+          
+            <div className={`p-6 rounded-lg border-2 ${node.colorClass}`}>
+                <p className="text-lg font-medium text-brand-text">{node.text}</p>
+            </div>
+
+            {node.options && (
+                <div className="mt-6 space-y-3">
+                    <p className="text-sm font-semibold text-brand-subtle">Choose the next step:</p>
+                    {node.options.map((option, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handleOptionClick(option.next)}
+                            className="w-full flex justify-between items-center text-left p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 hover:border-gray-400 transition"
+                        >
+                            <span className="font-medium text-brand-text">{option.text}</span>
+                            <ChevronRightIcon className="w-5 h-5 text-brand-subtle" />
+                        </button>
+                    ))}
+                </div>
+            )}
+            {node.resolution && (
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-semibold text-brand-text mb-2">Recommended Action / Resolution:</h4>
+                    <p className="text-brand-text whitespace-pre-wrap">{node.resolution}</p>
+                </div>
+            )}
+             <style>{`
+                @keyframes fade-in {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                .animate-fade-in {
+                    animation: fade-in 0.3s ease-out forwards;
+                }
+             `}</style>
+        </div>
+    );
+};
+
+const SupportCenter = ({ role }: { role: Role }) => {
+    const [activeWizard, setActiveWizard] = useState<WizardInfo | null>(null);
+
+    return (
+        <div className="space-y-8">
+            <Card>
+                {!activeWizard ? (
+                    <>
+                        <h2 className="text-2xl font-bold text-brand-text mb-1">Diagnostic Wizards</h2>
+                        <p className="text-brand-subtle mb-6">Select a wizard to begin a step-by-step diagnostic flow.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {WIZARDS.map((wizard) => (
+                                <button
+                                    key={wizard.key}
+                                    onClick={() => setActiveWizard(wizard)}
+                                    className="text-left p-6 bg-gray-50 rounded-lg border border-gray-200 hover:border-info hover:bg-white hover:shadow-md transition-all group"
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className="bg-blue-100 p-3 rounded-full group-hover:bg-info transition-colors">
+                                            {React.cloneElement(wizard.icon, {className: "w-8 h-8 text-info group-hover:text-white transition-colors"})}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-brand-text">{wizard.title}</h4>
+                                            <p className="text-sm text-brand-subtle">{wizard.description}</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <DiagnosticWizard wizard={activeWizard} onClose={() => setActiveWizard(null)} />
+                )}
+            </Card>
+
+            <IncidentAssessment />
+            
+            <Card>
+                <h3 className="text-lg font-semibold text-brand-text mb-4">Escalation Matrix</h3>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="p-2 font-semibold">Component</th>
+                                <th className="p-2 font-semibold">Vendor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="border-b">
+                                <td className="p-2">IRIS Engine</td>
+                                <td className="p-2">LucidHealth</td>
+                            </tr>
+                            <tr className="border-b">
+                                <td className="p-2">Unifier Appliances</td>
+                                <td className="p-2">DICOM Systems</td>
+                            </tr>
+                            <tr className="border-b">
+                                <td className="p-2">PowerScribe 360</td>
+                                <td className="p-2">Nuance</td>
+                            </tr>
+                            <tr>
+                                <td className="p-2">Azure Platform</td>
+                                <td className="p-2">Microsoft</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+        </div>
+    );
+};
+
+export default SupportCenter;
