@@ -1,4 +1,5 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { KNOWLEDGE_BASE_DOCUMENT } from '../constants';
 
@@ -91,4 +92,89 @@ export const generateQADataset = async (
     }
     throw new Error("An unknown error occurred while generating the dataset.");
   }
+};
+
+export const generateDocumentation = async (topic: string): Promise<string> => {
+      try {
+        const systemInstructionForDocGen = `You are a senior technical writer tasked with creating a support document for a Healthcare IT platform.
+        Your knowledge is strictly limited to the provided support documentation context.
+        Based on the provided context and the user's topic, generate a clear, well-structured troubleshooting guide.
+        The guide should be formatted using Markdown and include the following sections where appropriate:
+        - **Summary**: A brief overview of the issue.
+        - **Common Symptoms**: A list of observable symptoms.
+        - **Diagnostic Steps**: A step-by-step guide to investigating the problem.
+        - **Resolution Path**: Recommended solutions and actions.
+        - **Escalation**: When and how to escalate the issue.
+        If the topic cannot be addressed by the provided context, state that you cannot create documentation on that topic.`;
+
+        const prompt = `CONTEXT: """${KNOWLEDGE_BASE_DOCUMENT}""" \n\n DOCUMENTATION_TOPIC: """${topic}"""`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+          config: {
+            systemInstruction: systemInstructionForDocGen,
+          },
+        });
+
+        return response.text;
+      } catch (error) {
+        console.error("Error generating documentation:", error);
+        return "There was an error generating the documentation. Please check the console for details.";
+      }
+    };
+
+export const getDiagnosticResponse = async (topic: string, history: { sender: 'user' | 'bot'; text: string }[]): Promise<string> => {
+    const diagnosticSystemInstruction = `You are "Navigator AI," an expert diagnostic assistant for a Healthcare IT imaging platform. Your knowledge is strictly limited to the provided support documentation context.
+You are currently running a diagnostic wizard for: "${topic}".
+Your goal is to guide the user step-by-step to diagnose and resolve the issue. Ask clarifying questions one at a time. Do not overwhelm the user with a wall of text or list multiple options. Guide them down a single path based on their answers.
+Reference specific systems or protocols from the document.
+When you have enough information, provide a clear set of actions or a final resolution.
+If the user's issue seems outside the scope of "${topic}" or the documentation, gently guide them back or state you cannot help with that specific issue based on the provided context.`;
+
+    const contents = history.map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }],
+    }));
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [
+                { role: 'user', parts: [{ text: `Use the following context to answer all questions:\n\nCONTEXT: """${KNOWLEDGE_BASE_DOCUMENT}"""` }] },
+                { role: 'model', parts: [{ text: 'Understood. I will use this context to help diagnose issues based on the user\'s input.' }] },
+                ...contents
+            ],
+            config: {
+                systemInstruction: diagnosticSystemInstruction,
+            },
+        });
+        return response.text;
+    } catch (error) {
+        console.error("Error in diagnostic query:", error);
+        return "There was an error processing your diagnostic request. Please try again.";
+    }
+};
+
+export const getExplanationFor = async (textToExplain: string): Promise<string> => {
+    const explanationSystemInstruction = `You are an expert assistant for a Healthcare IT imaging platform. Your task is to explain the provided text in simple terms, relating it back to the provided support documentation context.
+Explain *why* this step or question is being asked in the diagnostic process and what information it helps to gather.
+For example, if the text is "Is the Unifier's cache utilization over 90%?", your explanation should mention that the documentation indicates this is a critical threshold and can cause performance issues, requiring a purge of old studies.
+Be concise and clear. Your knowledge is strictly limited to the provided support documentation.`;
+
+    const prompt = `CONTEXT: """${KNOWLEDGE_BASE_DOCUMENT}""" \n\n EXPLAIN THIS DIAGNOSTIC STEP/QUESTION: """${textToExplain}"""`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                systemInstruction: explanationSystemInstruction,
+            },
+        });
+        return response.text;
+    } catch (error) {
+        console.error("Error getting explanation:", error);
+        return "There was an error generating the explanation. Please check the console for details.";
+    }
 };

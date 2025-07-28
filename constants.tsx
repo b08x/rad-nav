@@ -192,12 +192,26 @@ This support framework ensures rapid problem identification, a path to efficient
 `;
 
 export const SYSTEM_COMPONENTS: SystemComponent[] = [
-    { id: 'pacs', name: 'PACS Systems', description: 'Picture Archiving and Communication System.', details: ["Vendor-specific per site.", "Source of DICOM images."], position: { top: '50%', left: '5%' }, colorClass: 'text-layer-data' },
-    { id: 'unifier', name: 'Unifier Appliances', description: 'On-premise caching and connectivity appliances.', details: ["Located in 5 regions.", "Monitor storage (3TB), cache, and volume."], position: { top: '50%', left: '25%' }, colorClass: 'text-layer-data' },
-    { id: 'iris', name: 'IRIS Engine', description: 'Core HL7 & API integration engine.', details: ["Runs on Azure VMs.", "Handles message transformation and routing."], position: { top: '50%', left: '50%' }, colorClass: 'text-layer-logic' },
-    { id: 'powerscribe', name: 'PowerScribe 360', description: 'Dictation and reporting system by Nuance.', details: ["Integrates via HTTPS API.", "Failures can halt report workflows."], position: { top: '25%', left: '75%' }, colorClass: 'text-layer-api' },
-    { id: 'risemr', name: 'RIS/EMR', description: 'Radiology Information System / Electronic Medical Record.', details: ["Receives final reports via HL7.", "Critical for patient record integrity."], position: { top: '50%', left: '75%' }, colorClass: 'text-layer-api' },
-    { id: 'radassist', name: 'RadAssist', description: 'Primary diagnostic workstation for radiologists.', details: ["Pulls images via Unifier.", "Performance is a key KPI."], position: { top: '75%', left: '25%' }, colorClass: 'text-layer-presentation' },
+    { id: 'pacs', name: 'PACS Systems', description: 'Picture Archiving and Communication System.', details: ["Vendor-specific per site.", "Source of DICOM images."], colorClass: 'text-layer-data' },
+    { 
+      id: 'unifier', 
+      name: 'Unifier Appliances', 
+      description: 'On-premise caching and connectivity appliances.', 
+      details: ["Located in 5 regions.", "Monitor storage (3TB), cache, and volume."], 
+      colorClass: 'text-layer-data',
+      unifierStatus: {
+        serviceStatus: 'Online',
+        cacheUsage: 85,
+        recentErrors: {
+            count: 3,
+            lastError: 'DICOM C-STORE failed: timeout connecting to PACS-XYZ.'
+        }
+      }
+    },
+    { id: 'iris', name: 'IRIS Engine', description: 'Core HL7 & API integration engine.', details: ["Runs on Azure VMs.", "Handles message transformation and routing."], colorClass: 'text-layer-logic' },
+    { id: 'powerscribe', name: 'PowerScribe 360', description: 'Dictation and reporting system by Nuance.', details: ["Integrates via HTTPS API.", "Failures can halt report workflows."], colorClass: 'text-layer-api' },
+    { id: 'risemr', name: 'RIS/EMR', description: 'Radiology Information System / Electronic Medical Record.', details: ["Receives final reports via HL7.", "Critical for patient record integrity."], colorClass: 'text-layer-api' },
+    { id: 'radassist', name: 'RadAssist', description: 'Primary diagnostic workstation for radiologists.', details: ["Pulls images via Unifier.", "Performance is a key KPI."], colorClass: 'text-layer-presentation' },
 ];
 
 export const CONNECTIONS: Connection[] = [

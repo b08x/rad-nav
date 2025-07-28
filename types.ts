@@ -10,6 +10,16 @@ export enum Tab {
   SupportCenter = 'Support Operations Center',
   KnowledgeEngine = 'Knowledge Extraction Engine',
   DatasetGenerator = 'Dataset Generator',
+  IntegratedSupportHub = 'Integrated Support Hub',
+}
+
+export interface UnifierStatus {
+  serviceStatus: 'Online' | 'Degraded' | 'Offline';
+  cacheUsage: number;
+  recentErrors: {
+    count: number;
+    lastError: string;
+  };
 }
 
 export interface SystemComponent {
@@ -17,8 +27,8 @@ export interface SystemComponent {
   name: string;
   description: string;
   details: string[];
-  position: { top: string; left: string; };
   colorClass: string;
+  unifierStatus?: UnifierStatus;
 }
 
 export interface Connection {
